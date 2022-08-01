@@ -1,0 +1,100 @@
+﻿using System;
+using System.Threading.Tasks;
+using AutoMapper;
+using Entities;
+using Entities.DTOs;
+using Foresythe.ActionFilters;
+using Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace Foresythe.Controllers
+{
+    [Route("api/v1/Authors")]
+    public class AuthorController : Controller
+    {
+        private readonly IRepositoryManager _repositoryManager;
+        private readonly ILoggerService _logger;
+        private readonly IMapper _mapper;
+
+        public AuthorController(IRepositoryManager repositoryManager,
+            ILoggerService logger,
+            IMapper mapper)
+        {
+            _repositoryManager = repositoryManager;
+            _logger = logger;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAuthors()
+        {
+            var authors = await _repositoryManager.authorRepository.GetAllAuthorsAsync();
+
+            return Ok(authors);
+        }
+
+        [HttpGet("{AuthorId}")]
+        public IActionResult GetAuthor(Guid AuthorId)
+        {
+            var author = _repositoryManager.authorRepository.GetAuthorAsync(AuthorId);
+            var authorResponse = _mapper.Map<AuthorOutputDto>(author);
+
+            return Ok(authorResponse);
+        }
+
+        [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> AddAuthor([FromBody] AuthorInputDto authorInputDto)
+        {
+            var author = _mapper.Map<Author>(authorInputDto);
+            await _repositoryManager.authorRepository.CreateAsync(author);
+            await _repositoryManager.SaveAsync();
+
+            var authorResponse = _mapper.Map<AuthorOutputDto>(author);
+
+            return CreatedAtAction("GetAuthor", new { AuthorId = author.Id }, authorResponse);
+        }
+
+        [HttpPatch("{AuthorId}")]
+        public async Task<IActionResult> UpdatePartialAuthor(Guid AuthorId, [FromBody] JsonPatchDocument<AuthorInputDto> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                _logger.LogError("patchDocument object sent from client is null.");
+                return BadRequest("patchDocument object is null");
+            }
+
+            var author = HttpContext.Items["book"] as Book;
+            var patchedAuthor = _mapper.Map<AuthorInputDto>(author);
+
+            patchDocument.ApplyTo(patchedAuthor, ModelState);
+
+            TryValidateModel(patchDocument);
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the patch document");
+                return UnprocessableEntity(ModelState);
+            }
+
+            _mapper.Map(patchedAuthor, author);
+            await _repositoryManager.SaveAsync();
+
+            var authorResponse = _mapper.Map<AuthorOutputDto>(author);
+
+            return Ok(authorResponse);
+        }
+
+        [HttpDelete("{AuthorId}")]
+        public async Task<IActionResult> DeleteAuthor(Guid AuthorId)
+        {
+            var author = await _repositoryManager.authorRepository.GetAuthorAsync(AuthorId);
+            _repositoryManager.authorRepository.Delete(author);
+            await _repositoryManager.SaveAsync();
+
+            return NoContent();
+        }
+    }
+}

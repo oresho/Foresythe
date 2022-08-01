@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.810.15
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foresythe", "Foresythe\Foresythe.csproj", "{E5AAE811-6B8B-414C-A6AF-14F13EDFCE71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{34FDA6A7-F5D2-4D33-A7E2-73E6675AA91F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{7E17AD98-8175-4EA5-912F-021F043CA68E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E5AAE811-6B8B-414C-A6AF-14F13EDFCE71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5AAE811-6B8B-414C-A6AF-14F13EDFCE71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5AAE811-6B8B-414C-A6AF-14F13EDFCE71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5AAE811-6B8B-414C-A6AF-14F13EDFCE71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34FDA6A7-F5D2-4D33-A7E2-73E6675AA91F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34FDA6A7-F5D2-4D33-A7E2-73E6675AA91F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34FDA6A7-F5D2-4D33-A7E2-73E6675AA91F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34FDA6A7-F5D2-4D33-A7E2-73E6675AA91F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E17AD98-8175-4EA5-912F-021F043CA68E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E17AD98-8175-4EA5-912F-021F043CA68E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E17AD98-8175-4EA5-912F-021F043CA68E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E17AD98-8175-4EA5-912F-021F043CA68E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A62B1354-6F9B-4FD7-82CF-27EC9FFCE645}
+	EndGlobalSection
+EndGlobal
