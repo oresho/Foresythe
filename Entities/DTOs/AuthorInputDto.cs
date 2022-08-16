@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Entities.DTOs
@@ -12,7 +11,7 @@ namespace Entities.DTOs
         [Required(ErrorMessage = "Last Name is a required field.")]
         public string LastName { get; set; }
 
-        public List<Book> Books { get; set; }
+        public List<BookInputDto> Books { get; set; }
 
     }
 }

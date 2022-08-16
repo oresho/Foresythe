@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using Entities;
 using Entities.DTOs;
+using Entities.Models;
 using Foresythe.ActionFilters;
 using Interfaces;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Foresythe.Controllers
 {
@@ -30,15 +30,17 @@ namespace Foresythe.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAuthors()
         {
-            var authors = await _repositoryManager.authorRepository.GetAllAuthorsAsync();
+            var authors = await _repositoryManager.AuthorRepository.GetAllAuthorsAsync();
+            var authorResponse = _mapper.Map<IEnumerable<AuthorOutputDto>>(authors);
 
-            return Ok(authors);
+            return Ok(authorResponse);
         }
 
         [HttpGet("{AuthorId}")]
+        [ServiceFilter(typeof(ValidateAuthorExistsAttribute))]
         public IActionResult GetAuthor(Guid AuthorId)
         {
-            var author = _repositoryManager.authorRepository.GetAuthorAsync(AuthorId);
+            var author = HttpContext.Items["author"] as Author;
             var authorResponse = _mapper.Map<AuthorOutputDto>(author);
 
             return Ok(authorResponse);
@@ -49,7 +51,7 @@ namespace Foresythe.Controllers
         public async Task<IActionResult> AddAuthor([FromBody] AuthorInputDto authorInputDto)
         {
             var author = _mapper.Map<Author>(authorInputDto);
-            await _repositoryManager.authorRepository.CreateAsync(author);
+            await _repositoryManager.AuthorRepository.CreateAsync(author);
             await _repositoryManager.SaveAsync();
 
             var authorResponse = _mapper.Map<AuthorOutputDto>(author);
@@ -58,6 +60,7 @@ namespace Foresythe.Controllers
         }
 
         [HttpPatch("{AuthorId}")]
+        [ServiceFilter(typeof(ValidateAuthorExistsAttribute))]
         public async Task<IActionResult> UpdatePartialAuthor(Guid AuthorId, [FromBody] JsonPatchDocument<AuthorInputDto> patchDocument)
         {
             if (patchDocument == null)
@@ -66,7 +69,7 @@ namespace Foresythe.Controllers
                 return BadRequest("patchDocument object is null");
             }
 
-            var author = HttpContext.Items["book"] as Book;
+            var author = HttpContext.Items["author"] as Author;
             var patchedAuthor = _mapper.Map<AuthorInputDto>(author);
 
             patchDocument.ApplyTo(patchedAuthor, ModelState);
@@ -88,10 +91,11 @@ namespace Foresythe.Controllers
         }
 
         [HttpDelete("{AuthorId}")]
+        [ServiceFilter(typeof(ValidateAuthorExistsAttribute))]
         public async Task<IActionResult> DeleteAuthor(Guid AuthorId)
         {
-            var author = await _repositoryManager.authorRepository.GetAuthorAsync(AuthorId);
-            _repositoryManager.authorRepository.Delete(author);
+            var author = HttpContext.Items["author"] as Author;
+            _repositoryManager.AuthorRepository.Delete(author);
             await _repositoryManager.SaveAsync();
 
             return NoContent();

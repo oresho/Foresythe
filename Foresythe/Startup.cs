@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Foresythe.ActionFilters;
+using Foresythe.Configurations;
 using Foresythe.Extensions;
 using Foresythe.Repositories;
 using Foresythe.Services;
@@ -43,13 +44,20 @@ namespace Foresythe
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IRepositoryManager, RepositoryManager>();
+            services.AddScoped<IAuthenticationManager, AuthenticationManager>();
 
             services.AddScoped<ValidationFilterAttribute>();
             services.AddScoped<ValidateBookExistsAttribute>();
-
-            services.AddDbContext<RepositoryContext>(options =>
-            options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),
-            b => b.MigrationsAssembly("Foresythe")));
+            services.AddScoped<ValidateAuthorExistsAttribute>();
+            services.AddScoped<ValidateBookExistsAttribute>();
+            
+            services.ConfigureSqlContext(Configuration);
+            
+            services.ConfigureCors();
+            services.ConfigureIdentity();
+            services.ConfigureJwt(Configuration);
+            services.ConfigureCookies();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,6 +77,8 @@ namespace Foresythe
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
+            
+            app.UseCors("CorsPolicy");
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
@@ -76,6 +86,8 @@ namespace Foresythe
             });
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

@@ -1,0 +1,2 @@
+2022-08-02 09:38:47.1672 ERROR Invalid model state for the object. Controller: Author, action: AddAuthor
+2022-08-02 09:40:57.0208 INFO Author with id: eb3d8902-f29f-4cef-9797-714f73135438 doesn't exist in the database.

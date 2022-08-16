@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
-using Entities;
+using Entities.Models;
+using Foresythe.Configurations;
 using Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,25 +25,13 @@ namespace Foresythe.Repositories
 
         public async Task<IEnumerable<Book>> GetAllBooksAsync()
         {
-            var books = await GetAllAsync();
+            var books = await FindByCondition(b => b.Id == b.Id)
+                .Include(a => a.Authors)
+                .ToListAsync(); 
+
             return books;
         }
-
-        public async Task AddNewBookAsync(Book book)
-        {
-            await CreateAsync(book);
-        }
-
-        public void DeleteBook(Book book)
-        {
-            Delete(book);
-        }
-
-        public void UpdateBook(Book book)
-        {
-            Update(book);
-        }
-
+        
         public IQueryable<Book> FindBookByISBNAsync(string ISBN)
         {
             var book = FindByCondition(b => b.ISBN.Equals(ISBN));

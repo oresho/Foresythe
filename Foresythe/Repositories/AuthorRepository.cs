@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Entities;
+using Entities.Models;
+using Foresythe.Configurations;
 using Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,22 +29,7 @@ namespace Foresythe.Repositories
             var authors = await GetAllAsync();
             return authors;
         }
-
-        public async Task AddNewAuthorAsync(Author author)
-        {
-            await CreateAsync(author);
-        }
-
-        public void DeleteAuthor(Author author)
-        {
-            Delete(author);
-        }
-
-        public void UpdateAuthor(Author author)
-        {
-            Update(author);
-        }
-
+        
         public async Task<Author> GetAuthorAsync(Guid AuthorId)
         {
             var author = await FindByCondition(a => a.Id == AuthorId)

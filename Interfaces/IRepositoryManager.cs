@@ -5,8 +5,8 @@ namespace Interfaces
 {
     public interface IRepositoryManager
     {
-        IBookRepository bookRepository { get; }
-        IAuthorRepository authorRepository { get; }
+        IBookRepository BookRepository { get; }
+        IAuthorRepository AuthorRepository { get; }
         Task SaveAsync();
     }
 }

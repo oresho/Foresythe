@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Entities.DTOs
@@ -29,6 +28,6 @@ namespace Entities.DTOs
         public int YearPublished { get; set; }
 
         [Required(ErrorMessage = "Author(s) is a required field.")]
-        public List<Author> Authors { get; set; }
+        public List<AuthorInputDto> Authors { get; set; }
     }
 }

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Collections.Generic;
 using AutoMapper;
-using Entities;
 using Entities.DTOs;
+using Entities.Models;
 
 namespace Foresythe.Configurations
 {
@@ -13,7 +11,7 @@ namespace Foresythe.Configurations
         {
             CreateMap<BookInputDto, Book>().ReverseMap();
 
-            CreateMap<Book, BookOutputDto>().AfterMap<UseCustomConverter>();
+            CreateMap<Book, BookOutputDto>().AfterMap<AuthorListFormatter>();
 
             CreateMap<AuthorInputDto, Author>()
                 .ForMember(c => c.Name,
@@ -21,10 +19,12 @@ namespace Foresythe.Configurations
                 .ReverseMap();
 
             CreateMap<Author, AuthorOutputDto>();
+
+            CreateMap<UserForRegistrationDto, User>();
         }
     }
 
-    public class UseCustomConverter : IMappingAction<Book, BookOutputDto>
+    public class AuthorListFormatter : IMappingAction<Book, BookOutputDto>
     {
         public void Process(Book source, BookOutputDto destination, ResolutionContext context)
         {

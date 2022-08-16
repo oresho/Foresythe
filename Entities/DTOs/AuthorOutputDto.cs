@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Entities.DTOs
 {
@@ -7,6 +6,6 @@ namespace Entities.DTOs
     {
         public string Name { get; set; }
 
-        public List<Book> Books { get; set; }
+        public List<BookOutputDto> Books { get; set; }
     }
 }

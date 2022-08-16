@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Foresythe.Configurations;
 using Interfaces;
 
 namespace Foresythe.Repositories
 {
     public class RepositoryManager : IRepositoryManager
     {
-        private RepositoryContext _repositoryContext;
+        private readonly RepositoryContext _repositoryContext;
         private IAuthorRepository _authorRepository;
         private IBookRepository _bookRepository;
+        
         public RepositoryManager(RepositoryContext repositoryContext)
         {
             _repositoryContext = repositoryContext;
         }
 
-        public IBookRepository bookRepository
+        public IBookRepository BookRepository
         {
             get
             {
@@ -25,7 +27,7 @@ namespace Foresythe.Repositories
             }
         }
 
-        public IAuthorRepository authorRepository
+        public IAuthorRepository AuthorRepository
         {
             get
             {

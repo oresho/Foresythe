@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.Internal;
-using Entities;
 using Entities.DTOs;
+using Entities.Models;
 using Foresythe.ActionFilters;
 using Interfaces;
 using Microsoft.AspNetCore.JsonPatch;
@@ -33,10 +31,10 @@ namespace Foresythe.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBooks()
         {
-            var books = await _repositoryManager.bookRepository.GetAllBooksAsync();
-            //var bookResponse = _mapper.Map<IEnumerable<BookOutputDto>>(books); didnt work
+            var books = await _repositoryManager.BookRepository.GetAllBooksAsync();
+            var bookResponse = _mapper.Map<IEnumerable<BookOutputDto>>(books);
 
-            return Ok(books);
+            return Ok(bookResponse);
         }
 
         [HttpGet("{BookId}")]
@@ -54,13 +52,32 @@ namespace Foresythe.Controllers
         public async Task<IActionResult> AddBook([FromBody] BookInputDto bookInputDto)
         {
             var book = _mapper.Map<Book>(bookInputDto);
-            await _repositoryManager.bookRepository.CreateAsync(book);
+            await _repositoryManager.BookRepository.CreateAsync(book);
             await _repositoryManager.SaveAsync();
 
             var bookResponse = _mapper.Map<BookOutputDto>(book);
 
             return CreatedAtAction("GetBook", new { BookId = book.Id}, bookResponse);
         }        
+
+        [HttpPost("AddToAuthor/{AuthorId}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidateAuthorExistsAttribute))]
+        public async Task<IActionResult> AddBookToAuthor(Guid AuthorId, [FromBody] BookInputDto bookInputDto)
+        {
+            var book = _mapper.Map<Book>(bookInputDto);
+            await _repositoryManager.BookRepository.CreateAsync(book);
+
+            var author = HttpContext.Items["author"] as Author;
+            author.Books.Add(book);
+
+            await _repositoryManager.SaveAsync();
+            
+            var bookResponse = _mapper.Map<BookOutputDto>(book);
+
+            return CreatedAtAction("GetBook", new { BookId = book.Id }, bookResponse);
+        }
+
 
         [HttpPatch("{BookId}")]
         [ServiceFilter(typeof(ValidateBookExistsAttribute))]
@@ -97,25 +114,11 @@ namespace Foresythe.Controllers
         [ServiceFilter(typeof(ValidateBookExistsAttribute))]
         public async Task<IActionResult> DeleteBook(Guid BookId)
         {
-            var book = await _repositoryManager.bookRepository.GetBookAsync(BookId);
-            _repositoryManager.bookRepository.Delete(book);
+            var book = HttpContext.Items["book"] as Book;
+            _repositoryManager.BookRepository.Delete(book);
             await _repositoryManager.SaveAsync();
 
             return NoContent();
         }
-
-        #region Update
-        //[HttpPut("{BookId}", Name = "UpdateBook")] //ISBN index causing issues with updates
-        //public async Task<IActionResult> UpdateBook(Guid BookId, [FromBody] Book book1)
-        //{
-        //    var book = await _repositoryManager.bookRepository.GetBookAsync(BookId);
-        //    _repositoryManager.bookRepository.Update(book1);
-        //    await _repositoryManager.SaveAsync();
-
-        //    return NoContent();
-        //}
-        #endregion
-
-
     }
 }
